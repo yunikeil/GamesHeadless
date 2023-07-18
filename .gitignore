@@ -168,7 +168,7 @@ temp_outut.txt
 configuration.py
 
 # Project data files
-data/
+*[A-Za-z].db
 
 # Project test files
 test.py
