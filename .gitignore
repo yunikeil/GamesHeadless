@@ -168,6 +168,8 @@ temp_outut.txt
 configuration.py
 
 # Project data files
+test.zip
+server-settings.js
 [A-Za-z]*.db
 
 # Project test files
@@ -179,3 +181,4 @@ test[0-9].py
 
 # Library examples
 examples/
+
