@@ -168,14 +168,14 @@ temp_outut.txt
 configuration.py
 
 # Project data files
-*[A-Za-z].db
+[A-Za-z]*.db
 
 # Project test files
 test.py
 test[0-9].py
 
 # Ignore files with only digits in the name
-*[0-9]
+[!a-z!A-Z]*[0-9]*[!a-z!A-Z]
 
 # Library examples
 examples/
