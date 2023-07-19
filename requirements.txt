@@ -2,3 +2,5 @@ aiogram
 uvloop
 ujson
 aiohttp[speedups]
+aiosqlite
+docker
