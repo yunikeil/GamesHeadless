@@ -169,6 +169,7 @@ configuration.py
 
 # Project data files
 test.zip
+WorldExample.zip
 server-settings.json
 [A-Za-z]*.db
 
