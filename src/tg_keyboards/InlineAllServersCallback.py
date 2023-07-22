@@ -1,8 +1,12 @@
+import importlib
+
 from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from ..extensions.TGTimeoutCheck import Timeout
-#from ..extensions import DockerWorkerExtension as dc
+if __name__ != "__main__":
+    from ..extensions.DockerWorkerExtension import create_docker_container
+    from ..extensions.TGTimeoutCheck import Timeout
+    #from ..extensions import DockerWorkerExtension as dc
 
 
 # Обработчик нажатия на кнопки в меню allservers
@@ -14,25 +18,45 @@ def prc_allservers_menu():
             await callback_query.message.delete()
             await callback_query.answer()
             return
-        Timeout.update(callback_query.message.chat.id, callback_query.message.message_id, 10)
-        game_selected = "⚙ factorio" if "factorio" in callback_query.data else "🌌 astroneer"
-        return_to_allservers_menu = InlineKeyboardMarkup()
-        return_to_allservers_menu.add(
+        Timeout.update(callback_query.message.chat.id, callback_query.message.message_id, 5*60)
+        game_selected = "factorio" if "factorio_new" in callback_query.data else "astroneer"
+        process_menu = InlineKeyboardMarkup()
+        process_menu.add(
+            InlineKeyboardButton("Создать контейнер сервера", callback_data=f"new_container:{game_selected}"),
             InlineKeyboardButton("Вернуться к выбору", callback_data="return_to_allservers"),
         )
         await callback_query.message.edit_text(
             f"Выбрана игра: {game_selected}", # TODO 
-            reply_markup=return_to_allservers_menu
+            reply_markup=process_menu
         )
         await callback_query.answer()
     return {"filter": condition, "callback": process}
 
 
-# Обработчик  нажатия на кнопки после меню allservers
+# Обработчик нажатия на кнопку "Создать контейнер сервера" после выбора игры
+def prc_new_container_menu():
+    condition = lambda c: "new_container_" in c.data
+    async def process(callback_query: types.CallbackQuery):
+        Timeout.update(callback_query.message.chat.id, callback_query.message.message_id, 5*60)
+        game_selected = "factorio" if "factorio" in callback_query.data else "astroneer"
+        process_menu = InlineKeyboardMarkup()
+        process_menu.add(
+            InlineKeyboardButton("Создать контейнер сервера", callback_data=f"new_container_{game_selected}"),
+            InlineKeyboardButton("Вернуться к выбору", callback_data="return_to_allservers"),
+        )
+        await callback_query.message.edit_text(
+            f"Выбрана игра: {game_selected}", # TODO 
+            reply_markup=process_menu
+        )
+        await callback_query.answer()
+    return {"filter": condition, "callback": process}
+
+
+# Обработчик нажатия на кнопку Вернуться к выбору после выбора игры
 def prc_return_to_allservers_menu():
     condition = lambda c: c.data in ["return_to_allservers"]
     async def process(callback_query: types.CallbackQuery):
-        Timeout.update(callback_query.message.chat.id, callback_query.message.message_id, 10)
+        Timeout.update(callback_query.message.chat.id, callback_query.message.message_id, 5*60)
         allservers_menu = InlineKeyboardMarkup(row_width=2)
         allservers_menu.add(
             InlineKeyboardButton("factorio", callback_data="factorio_new"), 
@@ -47,7 +71,7 @@ def prc_return_to_allservers_menu():
     return {"filter": condition, "callback": process}
 
 
-
+allservers_handlers = [prc_allservers_menu, prc_return_to_allservers_menu]
 
 
 

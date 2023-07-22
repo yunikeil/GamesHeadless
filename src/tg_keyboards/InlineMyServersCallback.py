@@ -16,3 +16,8 @@ def prc_myservers_menu():
         )
         await callback_query.answer()
     return {"filter": condition, "callback": process}
+
+
+myservers_handlers = [prc_myservers_menu]
+
+

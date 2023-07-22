@@ -1,18 +1,13 @@
+import inspect
 from typing import Final
 
 from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from ..extensions.TGTimeoutCheck import Timeout
-
-"""
-# Inline-клавиатура для примера
-example_keyboard = InlineKeyboardMarkup(row_width=2)
-example_keyboard.add(
-    InlineKeyboardButton("example1", callback_data="example1"),
-    InlineKeyboardButton("example2", callback_data="example2"),
-)
-"""
+if __name__ != "__main__":
+    from ..extensions.TGTimeoutCheck import Timeout
+else:
+    pass
 
 
 # Обработчик команды /start + а-ля замыкание
@@ -41,7 +36,7 @@ def cmd_allservers():
             "Привет! Это информационное меню о всех серверах для игр.",
             reply_markup=allservers_menu
         )
-        Timeout(message.chat.id, message.message_id, 10)
+        Timeout(message.chat.id, message.message_id, 5*60)
     return {"commands": names, "callback": command}
 
 
@@ -74,4 +69,6 @@ def cmd_profile():
         )
     return {"commands": names, "callback": command}
 
+
+menu_commands = [cmd_start, cmd_allservers, cmd_myservers, cmd_profile]
 
