@@ -24,24 +24,26 @@ def create_docker_container(
     client = docker.from_env()
 
     if not container_name or not image_name:
-        print("Пустое имя контейнера или образа")
-        return
+        print("none container or image name")
+        return False
 
     if not host_port or not container_port:
         ports = None
     else:
         ports = {f"{container_port}/tcp": host_port}
 
-    print("Создаем контейнер Docker...")
+    print("creating new Docker container...")
     try:
         container = client.containers.run(
             image=image_name, name=container_name, ports=ports, detach=True
         )
     except docker.errors.ContainerError as e:
         print(f"Ошибка при создании контейнера: {e}")
+        return False
     else:
-        print(f"Контейнер Docker {container_name} успешно создан.")
-        print(f"ID контейнера: {container.id}")
+        print(f"Docker container {container_name} successfully created.")
+        print(f"container id: {container.id}")
+        return container.id
 
 
 if __name__ == "__main__":

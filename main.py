@@ -31,6 +31,7 @@ for message_command in message_commands:
 callback_query_handlers = allservers_handlers \
     + myservers_handlers 
 for callback_query_handler in callback_query_handlers:
+    callback_query_handler = callback_query_handler()
     dp.register_callback_query_handler(
         callback_query_handler["callback"],
         callback_query_handler["filter"]
