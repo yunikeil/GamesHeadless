@@ -12,7 +12,7 @@ class DataBase:
             db_name (_type_): _description_
         """
         file_dir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '..', 'data')
+            os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data')
         self.db_path = os.path.join(file_dir, db_name)
         self.db_connection = None
     

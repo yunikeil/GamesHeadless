@@ -5,6 +5,7 @@ from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 if __name__ != "__main__":
+    from ..extensions.DBWorkerExtension import DataBase
     from ..extensions.TGTimeoutCheck import Timeout
 else:
     pass
@@ -14,9 +15,25 @@ else:
 def cmd_start():
     names = ['start', 'help']
     async def command(message: types.Message):
+        try:
+            db = DataBase("GamesHeadless.db")
+            await db.connect()
+            user_profile = await db.get_one(
+                "SELECT * FROM UserProfiles WHERE ProfileID=?",
+                (message.from_id,)
+            )
+            if not user_profile:
+                await db.run_que(
+                    "INSERT INTO UserProfiles (ProfileID, BankAccount) VALUES (?, ?)",
+                    (message.from_id, 0.0)
+                )
+        except:
+            pass
+        finally:
+            await db.close()
         await message.reply(
-            "Привет! Это бот проекта Games Headless. Тут должно быть" \
-            " краткое описание, но оно будет готово позднее...",
+            "Привет! Это бот проекта Games Headless.\n" \
+            "Тут должно быть краткое описание, но оно будет готово позднее...",
             reply_markup=None
         )
     return {"commands": names, "callback": command}
@@ -26,6 +43,7 @@ def cmd_start():
 def cmd_allservers():
     names = ['allservers']
     async def command(message: types.Message):
+        Timeout(message.chat.id, message.message_id, 5*60)
         allservers_menu = InlineKeyboardMarkup(row_width=2)
         allservers_menu.add(
             InlineKeyboardButton("factorio", callback_data="factorio_new"), 
@@ -36,7 +54,6 @@ def cmd_allservers():
             "Привет! Это информационное меню о всех серверах для игр.",
             reply_markup=allservers_menu
         )
-        Timeout(message.chat.id, message.message_id, 5*60)
     return {"commands": names, "callback": command}
 
 
@@ -44,12 +61,21 @@ def cmd_allservers():
 def cmd_myservers():
     names = ['myservers']
     async def command(message: types.Message):
-        ...
-        # TODO работа с бд (чтение конфигов, составление клавы)
+        try:
+            db = DataBase("GamesHeadless.db")
+            await db.connect()
+            servers = await db.get_all( # заполнение названий хотя бы автоматическое!!
+                "SELECT (ServerSettings) FROM CreatedServers WHERE ContainerOwner=?",
+                (message.from_id,)
+            )
+            print(servers)
+        except:
+            pass
+        finally:
+            await db.close()
         myservers_menu = InlineKeyboardMarkup()
         myservers_menu.add( 
-            InlineKeyboardButton("⚙ Test123Save ", callback_data="factorio_my:123"),
-            InlineKeyboardButton("⚙ Test321Save", callback_data="factorio_my:312"),
+            InlineKeyboardButton("закрыть меню", callback_data="close_menu"),
         )
         await message.reply(
             "Привет! Это информационное меню о купленных серверах.",
@@ -62,7 +88,14 @@ def cmd_myservers():
 def cmd_profile():
     names = ['profile']
     async def command(message: types.Message):
-        ...
+        try:
+            db = DataBase("GamesHeadless.db")
+            await db.connect()
+            ...
+        except:
+            pass
+        finally:
+            await db.close()
         await message.reply(
             "Привет! Это информационное меню о профиле.",
             reply_markup=None
