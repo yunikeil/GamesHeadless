@@ -85,7 +85,7 @@ class DataBase:
             async with self.db_connection.execute(sql, params) as cursor:
                 return await cursor.fetchall()
         except BaseException as ex:
-            pass # print(ex_format(ex, "get_all"))
+            print(ex)
             return False
 
 

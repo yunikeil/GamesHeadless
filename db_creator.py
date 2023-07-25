@@ -23,7 +23,7 @@ async def main():
     """
     await db.run_que(
         "CREATE TABLE IF NOT EXISTS CreatedServers "
-        "(ContainerOwner INTEGER, ContainerSettings TEXT, ServerSettings TEXT)"
+        "(HostIP TEXT, ContainerOwner INTEGER, ContainerSettings TEXT, ServerSettings TEXT)"
     )
 
     await db.close()

@@ -21,6 +21,9 @@ def build_docker_image(dockerfile_path, image_name):
 def create_docker_container(
     container_name=None, image_name=None, host_port=None, container_port=None
 ):
+    if container_port == None:
+        container_port = host_port
+    
     client = docker.from_env()
 
     if not container_name or not image_name:

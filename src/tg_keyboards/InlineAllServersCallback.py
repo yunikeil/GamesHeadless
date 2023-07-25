@@ -1,5 +1,6 @@
 import importlib
 import random
+import json
 
 from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -17,7 +18,7 @@ def prc_allservers_menu_0():
     async def process(callback_query: types.CallbackQuery):
         Timeout.update(callback_query.message.chat.id, callback_query.message.message_id, 5 * 60)
         process_menu = InlineKeyboardMarkup(row_width=1)
-        add_btn = lambda *b: process_menu.add(b)
+        add_btn = lambda *b: process_menu.add(*b)
         if ":" not in callback_query.data:
             msg_text = f"Выберите нужную версию игры:"
             add_btn(*[InlineKeyboardButton(
@@ -30,7 +31,7 @@ def prc_allservers_menu_0():
             add_btn(
                 InlineKeyboardButton(
                     "Создать контейнер factorio",
-                    callback_data=f"new_container;factorio:1.1.87"
+                    callback_data=f"new_container;factorio:{version}"
                 ), 
                 InlineKeyboardButton( # Не уверен в надобности данной кнопки
                     "Вернуться к выбору версии",
@@ -57,16 +58,15 @@ def prc_allservers_menu_1():
     return {"filter": condition, "callback": process}
 
 
-
 # Обработчик нажатия на кнопку "Создать контейнер сервера" после выбора игры
 def prc_new_container_menu():
     condition = lambda c: "new_container" in c.data
     async def process(callback_query: types.CallbackQuery):
         Timeout.remove(callback_query.message.chat.id, callback_query.message.message_id, 5*60)
-        port = 8672 # TODO сделать нормальное выделение портов
-        image_name = callback_query.split(";")[1]
-        container_name = f"{image_name}:{port}"
-        container_id = create_docker_container(container_name, image_name, port, port)
+        container_port = 8672 # TODO сделать нормальное выделение портов
+        image_name = callback_query.data.split(";")[1]
+        container_name = f"{image_name.replace(':', '-')}-{container_port}"
+        container_id = create_docker_container(container_name, image_name, container_port)
         if container_id:
             msg =  f"Создан контейнер: {container_name}!\n" \
                    f"id: {container_id}\n" \
@@ -74,9 +74,14 @@ def prc_new_container_menu():
             try:
                 db = DataBase("GamesHeadless.db")
                 await db.connect()
+                container_settings = {
+                    "container_name": container_name,
+                    "container_id": container_id,
+                    "container_port": container_port
+                }
                 await db.run_que(
-                    "INSERT INTO CreatedServers (ContainerOwner) VALUES (?)",
-                    (callback_query.from_user.id,)
+                    "INSERT INTO CreatedServers (ContainerOwner, ContainerSettings) VALUES (?, ?)",
+                    (callback_query.from_user.id, json.dumps(container_settings))
                 )
             except:
                 pass

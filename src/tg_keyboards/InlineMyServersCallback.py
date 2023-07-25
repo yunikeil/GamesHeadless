@@ -3,7 +3,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 # Обработчик выбора личного сервера
-def prc_myservers_menu():
+def prc_myservers_menu(): # TODO 
     condition = lambda c: c.data.split(":")[0] == "factorio_my"
     async def process(callback_query: types.CallbackQuery):
         if callback_query.data.split(":")[1] == "123":

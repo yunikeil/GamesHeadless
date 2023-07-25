@@ -40,6 +40,7 @@ class Timeout:
 
     async def update_message(self):
         print("Msg updated!")
+        return # TODO
         message = self.bot.get_message(chat_id=self.chat_id, message_id=self.message_id)
         self.bot.edit_message_text(
             chat_id=self.chat_id,

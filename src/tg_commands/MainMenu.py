@@ -1,4 +1,5 @@
 import inspect
+import json
 from typing import Final
 
 from aiogram import types
@@ -32,7 +33,8 @@ def cmd_start():
         finally:
             await db.close()
         await message.reply(
-            "Привет! Это бот проекта Games Headless.\n" \
+            "Привет! Это бот проекта Games Headless.\n"
+            "Вы можете создать свой сервер через /allservers\n"
             "Тут должно быть краткое описание, но оно будет готово позднее...",
             reply_markup=None
         )
@@ -64,16 +66,20 @@ def cmd_myservers():
         try:
             db = DataBase("GamesHeadless.db")
             await db.connect()
-            servers = await db.get_all( # заполнение названий хотя бы автоматическое!!
-                "SELECT (ServerSettings) FROM CreatedServers WHERE ContainerOwner=?",
+            servers = [json.loads(server[0]) for server in await db.get_all(
+                "SELECT ContainerSettings FROM CreatedServers WHERE ContainerOwner=?",
                 (message.from_id,)
-            )
-            print(servers)
-        except:
-            pass
-        finally:
+            )]
             await db.close()
+        except:
+            await message.reply("Что-то пошло не так...")
+            await db.close()
+            return
         myservers_menu = InlineKeyboardMarkup()
+        myservers_menu.add(*[InlineKeyboardButton(
+            text=server['container_name'],
+            callback_data=f"container_info;{server['container_name']}"
+        ) for server in servers])
         myservers_menu.add( 
             InlineKeyboardButton("закрыть меню", callback_data="close_menu"),
         )
