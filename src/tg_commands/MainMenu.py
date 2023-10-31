@@ -60,7 +60,7 @@ def cmd_allservers():
 
 
 # Обработчик команды /myservers + а-ля замыкание
-def cmd_myservers():
+def cmd_myservers(): # TODO а-ля чёт тут пусто чекние /allservers
     names = ['myservers']
     async def command(message: types.Message):
         try:
