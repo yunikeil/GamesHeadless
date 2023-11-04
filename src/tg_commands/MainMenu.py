@@ -12,7 +12,7 @@ else:
     pass
 
 
-# Обработчик команды /start + а-ля замыкание
+# Обработчик команды /start
 def cmd_start():
     names = ['start', 'help']
     async def command(message: types.Message):
@@ -41,7 +41,7 @@ def cmd_start():
     return {"commands": names, "callback": command}
 
 
-# Обработчик команды /allservers + а-ля замыкание
+# Обработчик команды /allservers
 def cmd_allservers():
     names = ['allservers']
     async def command(message: types.Message):
@@ -59,7 +59,7 @@ def cmd_allservers():
     return {"commands": names, "callback": command}
 
 
-# Обработчик команды /myservers + а-ля замыкание
+# Обработчик команды /myservers
 def cmd_myservers(): # TODO а-ля чёт тут пусто чекние /allservers
     names = ['myservers']
     async def command(message: types.Message):
@@ -90,7 +90,7 @@ def cmd_myservers(): # TODO а-ля чёт тут пусто чекние /allse
     return {"commands": names, "callback": command}
 
 
-# Обработчик команды /profile + а-ля замыкание
+# Обработчик команды /profile
 def cmd_profile():
     names = ['profile']
     async def command(message: types.Message):
